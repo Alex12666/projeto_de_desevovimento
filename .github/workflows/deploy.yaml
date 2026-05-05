@@ -1,0 +1,20 @@
+name: projeto deploy aws terraform git action dockerimages
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  automacao:
+    
+    runs-on: ubuntu-latest 
+
+    steps:
+     
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      
+      - name: executando docker criacao de imagem
+        
+        run: docker build -t minha-imagem-frontend ./frontend
