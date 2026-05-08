@@ -1,26 +1,40 @@
-# 1. Regra para SSH (Sua porta de entrada para o terminal)
-resource "aws_vpc_security_group_ingress_rule" "allow_ssh_ipv4" {
-  security_group_id = aws_security_group.allow_tls.id
-  cidr_ipv4         = "0.0.0.0/0" 
+
+resource "aws_security_group" "allow_sg" {
+  name        = "allow_sg"
+  description = "Controle trafego de dados na rota"
+  vpc_id      = var.vpc
+
+  tags = {
+    Name = "allow_tls"
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "allow_tls_ssh" {
+  security_group_id = aws_security_group.allow_sg.id
+  cidr_ipv4         = "0.0.0.0/0" # Ajustado para IPv4
   from_port         = 22
   ip_protocol       = "tcp"
   to_port           = 22
 }
 
-# 2. Regra para HTTP (Porta 80 - Para o site rodar direto pelo IP)
-resource "aws_vpc_security_group_ingress_rule" "allow_http_ipv4" {
-  security_group_id = aws_security_group.allow_tls.id
-  cidr_ipv4         = "0.0.0.0/0"
+resource "aws_vpc_security_group_ingress_rule" "allow_tls_http" {
+  security_group_id = aws_security_group.allow_sg.id
+  cidr_ipv4         = "0.0.0.0/0" # Ajustado para IPv4
   from_port         = 80
   ip_protocol       = "tcp"
   to_port           = 80
 }
 
-# 3. Regra para porta 8080 (Onde seu container está agora)
-resource "aws_vpc_security_group_ingress_rule" "allow_8080_ipv4" {
-  security_group_id = aws_security_group.allow_tls.id
-  cidr_ipv4         = "0.0.0.0/0"
-  from_port         = 8080
+resource "aws_vpc_security_group_ingress_rule" "allow_tls_https" { # Nome único
+  security_group_id = aws_security_group.allow_sg.id
+  cidr_ipv4         = "0.0.0.0/0" # Ajustado para IPv4
+  from_port         = 443
   ip_protocol       = "tcp"
-  to_port           = 8080
+  to_port           = 443
+}
+
+resource "aws_vpc_security_group_egress_rule" "allow_all_traffic" {
+  security_group_id = aws_security_group.allow_sg.id
+  cidr_ipv4         = "0.0.0.0/0" # Ajustado para IPv4
+  ip_protocol       = "-1" 
 }
