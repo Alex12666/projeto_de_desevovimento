@@ -2,7 +2,7 @@
 resource "aws_security_group" "allow_sg" {
   name        = "allow_sg"
   description = "Controle trafego de dados na rota"
-  vpc_id      = var.vpc
+  vpc_id      = var.vpc_my
 
   tags = {
     Name = "allow_tls"
